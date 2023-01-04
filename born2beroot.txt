@@ -1,0 +1,121 @@
+Hostname:
+	mshehata
+Domain name:
+Root Password:
+	RandomPassword123
+Full name:
+	Mohamed Shehata
+Acc username:
+	mshehata
+Acc password:
+	lolotrollo123
+Encryption passphrase:
+	lolotrollo123
+
+Check for drive config:
+	lsblk
+Install sudo:
+	apt install sudo
+Add user to sudo:
+	adduser <username> sudo
+Installing vim:
+	sudo apt install vim
+Cofigure sudo:
+	sudo vim /etc/sudoers.d/sudo_config
+	Defaults        passwd_tries=3
+	Defaults        badpass_message="Sorry, wrong password! Try again!"
+	Defaults        logfile="/var/log/sudo/sudo.log"
+	Defaults        log_input,log_output
+	Defaults        iolog_dir="/var/log/sudo"
+	Defaults        requiretty
+	Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+Install openssh-server:
+	sudo apt install openssh-server
+Configuring ssh:
+	sudo vim /etc/ssh/sshd_config
+	Find and change the following lines in /etc/ssh/sshd_config
+	# Set-up SSH using Port 4242
+	#Port22 -> Port 4242
+	# Disable SSH login as root
+	#PermitRootLogin prohibit-password -> PermitRootLogin no
+	Rebooting SSH:
+		sudo systemctl restart ssh
+Check Status of SSH:
+	sudo service ssh status
+Install UFW(Uncomplicated Firewall)
+	sudo apt install ufw
+Enable UFW
+	sudo ufw enable
+	sudo ufw allow 4242
+	sudo ufw status
+Openssh from MAC terminal:
+	ssh <username>@<ip_address> -p 4242
+Add port forwarding tcp rule1 ports 4242
+restart ssh
+from hostside:	ssh<username>@127.0.0.1 -p 4242
+
+Password Policy:
+	sudo vim /etc/login.defs
+	| line 160 | PASS_MAX_DAYS  99999 -> PASS_MAX_DAYS  30
+	| line 161 | PASS_MIN_DAYS  0 -> PASS_MIN_DAYS  2
+	| line 161 | PASS_WARN_AGE  7
+Password Strength:
+	sudo apt install libpam-pwquality
+	Configure password strength policy "sudo vim /etc/pam.d/common-password":
+		25 password		requisite				pam_pwquality.so retry=3 <add policies here>
+			minlen=10 ucredit=-1 dcredit=-1 maxrepeat=3 reject_username difok=7 enforce_for_root
+Change password:	passwd	<- change user password
+					sudo passwd	<- change root password
+
+Creating New user:
+	sudo adduser <username>
+Verify user:
+	getent passwd <username>
+Check user's password expiry information:
+	sudo chage -l <username>
+
+Creating new usergroup:
+	sudo addgroup <groupname>
+Check usergroup:
+	groups <username>
+Add user to usergroup:
+	sudo adduser <username> <groupname>
+Verify if user is added to group:
+	getent group <groupname>
+
+Cron:
+Install nettools
+	sudo apt install net-tools
+Make a bash script to run every 10min:
+	su
+	sudo vim /usr/local/bin/monitoring.sh
+		then add the contents of monitoring.sh
+	sudo crontab -u root -e
+		*/10 * * * * sh /usr/local/bin/monitoring.sh | wall
+	sudo crontab -u root -l
+
+BONUS
+
+Install Lighttpd
+	sudo apt install lighttpd
+	Allow incoming port 80:
+		sudo ufw allow 80
+	Add port forwarding rule for port 80 on VMBox
+
+Install MariaDB
+	sudo apt install mariadb-server
+	sudo mysql_secure_installation
+		Enter -> n -> n -> y -> y -> y -> y
+	CREATE DATABASE wordpress;
+	GRANT ALL ON wordpress.* TO 'mshehata'@'localhost' IDENTIFIED BY 'lolotrollo123' WITH GRANT OPTION;
+	FLUSH PRIVILEGES;
+	exit
+To Verify
+	mariadb -u <username> -p
+	SHOW DATABASES;
+
+Install PHP
+	sudo apt install php-cgi php-mysql
+
+Install and configure wordpress
+	
